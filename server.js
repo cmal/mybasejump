@@ -13,40 +13,32 @@ var months=["January","Feburary","March","April",
 			"May","June","July","August",
 			"September","October","November",
 			"December"];
-app.put('/:date', function(req, res){
+app.get('/:date', function(req, res){
 	var json;
 	var unix;
 	var natural;
 	 if (req.params.date.search(/[a-z]/) !== -1) {
 	 	natural = decodeURIComponent(req.params.date);
 	 	var arr = natural.split(" ");
-	 	var myDate = new Date();
 	 	var year=parseInt(arr[2]);
 	 	var monthx=months.indexOf(arr[0]);
 	 	var day=parseInt(arr[1].slice(0,-1));
-	 	myDate.setFullYear(year, monthx, day);
-	 	unix = Number(myDate).toString();
-		json = {
-			"unix": unix,
-			"natural": natural
-		};
+	 	var myDate = new Date(Date.UTC(year, monthx, day));
+	 	unix = parseInt(Number(myDate)/1000);
 	} else if (req.params.date.search(/^\d+$/) !== -1) {
 		unix = parseInt(req.params.date);
-		var myDate = new Date(unix);
-		natural = months[myDate.getMonth()] + " " + myDate.getDate() + ", " + myDate.getFullYear();
-		json = {
-			"unix": unix,
-			"natural": natural
-		};
+		var myDate = new Date(unix*1000);
+		natural = months[myDate.getMonth()] + " " + myDate.getDate().toString() + ", " + myDate.getFullYear().toString();
 	} else {
-		json = {
-			"error": 1,
-		};
+		unix = "null";
+		natural = "null";
 	}
+	json = {
+		"unix": unix,
+		"natural": natural
+	};
 	res.send(JSON.stringify(json));
-})
-
-
+});
 
 var port = process.env.PORT || 8080;
 app.listen(port,  function () {
