@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 var express = require('express');
 var routes = require('./app/routes/index.js');
@@ -17,14 +17,19 @@ app.get('/:date', function(req, res){
 	var json;
 	var unix;
 	var natural;
-	 if (req.params.date.search(/[a-z]/) !== -1) {
-	 	natural = decodeURIComponent(req.params.date);
-	 	var arr = natural.split(" ");
-	 	var year=parseInt(arr[2]);
-	 	var monthx=months.indexOf(arr[0]);
-	 	var day=parseInt(arr[1].slice(0,-1));
-	 	var myDate = new Date(Date.UTC(year, monthx, day));
-	 	unix = parseInt(Number(myDate)/1000);
+	if (req.params.date.search(/[a-z]/) !== -1) {
+		try {
+	 		natural = decodeURIComponent(req.params.date);
+		 	var arr = natural.split(" ");
+		 	var year=parseInt(arr[2]);
+	 		var monthx=months.indexOf(arr[0]);
+		 	var day=parseInt(arr[1].slice(0,-1));
+	 		var myDate = new Date(Date.UTC(year, monthx, day));
+		 	unix = parseInt(Number(myDate)/1000);
+		} catch(err) {
+			unix = "null";
+			natural = "null";
+		}
 	} else if (req.params.date.search(/^\d+$/) !== -1) {
 		unix = parseInt(req.params.date);
 		var myDate = new Date(unix*1000);
